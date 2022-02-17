@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>Rain.js</title>
+
+  <style>
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { overflow: hidden; }
+
+    #rain { background: #000; }
+
+    .title-container {
+      position: absolute; 
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .title-container > div {
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      color: #fff;
+    }
+
+    .title {
+      font-size: 5em;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background-color: #fff;
+    }
+
+    .date {
+      padding-top: 1rem;
+      font-size: 2em;
+    }
+
+  </style>
+
+</head>
+<body onload="draw();">
+  <div class="title-container">
+    <div class="title">RAIN</div>
+    <div class="line"></div>
+    <div class="date">4/11/2021</div>
+  </div>
+  <canvas id="rain">
+    Tu navegador no soporta esta animación :(
+  </canvas>
+
+  <script>
+
+    var canvas = document.getElementById('rain');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var ctx = canvas.getContext('2d');
+    
+    function RainDrop (x, y, h, dy) {
+      this.x = x;
+      this.y = y;
+      this.h = h;
+      this.dy = dy;
+      
+      this.draw = function () {
+
+        // Drop gradient
+        let dropGradient = ctx.createLinearGradient(this.x, this.y, this.x+2, this.y+80);
+        dropGradient.addColorStop(1, 'white');
+        dropGradient.addColorStop(0, 'black');
+
+        ctx.fillStyle = dropGradient;
+        ctx.fillRect(this.x, this.y, 1, h);
+ 
+      }
+
+      this.update = function () {
+        if (this.y > innerHeight) {
+          this.y = 0 - h;
+          this.x = Math.random() * innerWidth;
+        }
+        this.y += this.dy;
+        this.draw();
+      }
+    }
+
+    function draw () {
+      requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+      for (var i = 0; i < dropArray.length; i++) {
+        dropArray[i].update();
+      }
+
+    }
+
+    var dropArray = [];
+
+    for (var i = 0; i < 50; i++) {
+      let x = Math.random() * innerWidth;
+      let y = Math.random() * innerHeight;
+      let h = Math.random() * 50 + 80;
+      let dy = Math.random() * 2 + 7;
+
+      dropArray.push(new RainDrop(x, y, h, dy));
+    }
+
+    draw();
+
+  </script>
+</body>
+</html>

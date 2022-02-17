@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>Matrix.js v0.1</title>
+
+  <style>
+        
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { overflow: hidden; }
+
+    #matrix { background-color: #000; }
+
+  </style>
+
+</head>
+<body>
+  <canvas id="matrix">
+    :(
+  </canvas>
+
+  <script>
+
+    canvas = document.getElementById('matrix');
+    ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var tamChar = 32;
+    var cantChar = Math.floor(canvas.width / (tamChar - 15));
+    var charSet = '日ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ012345789Z:・."=*+-<>¦｜ç'
+
+    function randomString() {
+      var res = '';
+      for (let i = 0; i < Math.floor(Math.random()*20) + 25; i++)
+        res += charSet[Math.floor(Math.random() * charSet.length)];
+      return res;
+    } 
+
+    function CharStream (x, y, dy, text) {
+      this.x = x;
+      this.y = y;
+      this.dy = dy;
+      this.text = text;
+      this.t = 0;
+      // this.c = 0;
+
+      this.draw = function () {
+
+        // Fade gradient
+        let dropGradient = ctx.createLinearGradient(this.x, this.y, this.x + tamChar, this.y + this.text.length * 2);
+        dropGradient.addColorStop(1, '#31b350');
+        dropGradient.addColorStop(0, '#000');
+
+        ctx.fillStyle = dropGradient;
+        ctx.font = `${tamChar}px Times New Roman`;
+
+        for (let i = 0; i < this.text.length - 1; i++) {
+          ctx.fillText(this.text[i], this.x, this.y + (tamChar - 10) * i);
+        }
+
+        ctx.fillStyle = '#bcfcdb';
+        ctx.fillText(this.text[this.text.length-1], this.x, this.y + tamChar + 20.4 * this.text.length)
+      }
+
+      this.update = function () {
+
+        if (this.y > canvas.height) {
+          this.y = 0 - this.text.length * tamChar;
+        }
+
+        if (this.t > dy) {
+          // this.text = this.text.substring(0, this.text.length-1); 
+          this.text = this.text.substring(1); 
+          this.text += charSet[Math.floor(Math.random() * charSet.length)];
+          this.y += tamChar;
+          this.t = 0;
+        }
+
+        // if (this.c > dy * 30) {
+        //   this.text = randomString();
+        //   this.c = 0;
+        // }
+
+        // this.c += 1;
+        this.t += 1;
+
+        this.draw();
+      }
+    }
+
+    function draw() {
+      requestAnimationFrame(draw);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (var i = 0; i < charStreamArray.length; i++) {
+        charStreamArray[i].update();
+      }  
+    }
+
+    var charStreamArray = [];
+
+    for (var i = 0; i < cantChar; i++) {
+      var y = Math.random() * canvas.height;
+      var dy = Math.random() * 6 + 3;
+      var text = randomString();
+
+      charStreamArray.push(new CharStream(i*(tamChar - 9), y, dy, text))
+    }
+
+    draw();
+
+  </script>
+</body>
+</html>
